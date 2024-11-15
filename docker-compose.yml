@@ -1,0 +1,46 @@
+version: "3.6"
+services:
+  samli:
+    privileged: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "samli/nren:latest"
+    container_name: "samli"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - storage-data:/app/web/images/idp_logo
+      - ./app/app/config:/app/app/config:rw
+      - ./conf/credentials/wildcard_certificate.crt:/etc/pki/wildcard_certificate.crt
+      - ./conf/credentials/wildcard_certificate.key:/etc/pki/wildcard_certificate.key
+      - ./conf/credentials/wildcard_certificate.key.enc:/etc/pki/wildcard_certificate.key.enc
+      - ./app/app/config/parameters.yml:/app/app/config/parameters.yml
+    restart: unless-stopped
+    environment:
+      - "APP_ENV=prod"
+      - "SYMFONY_ENV=prod"
+      - "SYMFONY_DEBUG=0"
+      - "SAMLIDP_HOSTNAME=testidp.ubuntunet.net"
+      - "VAULT_PASS=2Z9hTTR5P47"
+      - "DATABASE_HOST=196.32.212.221"
+      - "DATABASE_PORT=5432"
+      - "DATABASE_DRIVER=pdo_pgsql"
+      - "DATABASE_VERSION=10"
+      - "DATABASE_NAME=samlidp_db"
+      - "DATABASE_USER=samlidp_user"
+      - "DATABASE_PASSWORD=secret"
+      - "MAILER_HOST=127.0.0.1"
+      - "MAILER_PORT=25"
+      - "MAILER_ENCRYPTION=ssl"
+      - "MAILER_USER=user"
+      - "MAILER_PASSWORD=password"
+      - "MAILER_SENDER=noreply@example.org"
+      - "ROLLBAR_ACCESS_TOKEN=fake"
+      - "LOGGLY_AUTH_TOKEN=fake"
+      - "LOGGLY_TAG=samli-ssp"
+      - "REMOTE_LOGSERVER_AND_PORT=host_or_ip:port"
+      - "SAMLIDP_RUNNING_MODE=frontend"
+volumes:
+  storage-data:
